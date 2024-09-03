@@ -4,7 +4,6 @@
 [Ll]ib
 [Ll]ib64
 [Ll]ocal
-[Ss]cripts
 .vscode
 __pycache__
 pyvenv.cfg
@@ -12,4 +11,4 @@ pyvenv.cfg
 pip-selfcheck.json
 .idea
 __pycache__
-
+venv
