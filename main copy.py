@@ -13,72 +13,28 @@ from selenium.webdriver.common.by import By
 from scripts.Verificador import VerificarNotaBaixada
 from scripts.Formatacao import Formatacao
 from scripts.Login import Login
-from bot.Navegacao import *
+from bot.Navegacao import Bot
 
 login = Login()
 formatacao = Formatacao()
+verificador = VerificarNotaBaixada()
 bot = Bot()
 
-############## Leitura da planilha ##############
-def ler_planilha():
-    lerPlanilha = pd.read_excel(
-        formatacao.get_caminhoNotas(),
-        formatacao.get_sheetnameNotas(),
-        dtype={'Documento': str, 'Protocolo': str}
-    )
+bot.ler_planilha()
 
-    lerPlanilha['Nome'] = lerPlanilha['Nome'].astype(str)
-    lerPlanilha['Produto'] = lerPlanilha['Produto'].astype(str)
-    lerPlanilha['Nome do AVP'] = lerPlanilha['Nome do AVP'].astype(str)
-    lerPlanilha['Protocolo'] = lerPlanilha['Protocolo'].astype(str)
-    lerPlanilha['Documento'] = lerPlanilha['Documento'].astype(str)
-    lerPlanilha['Valor do Boleto'] = lerPlanilha['Valor do Boleto'].astype(str)
-    lerPlanilha['E-mail do Titular'] = lerPlanilha['E-mail do Titular'].astype(str)
-
-    lerPlanilha = VerificarNotaBaixada.verificadorNotaBaixada(lerPlanilha)
-    lerPlanilha = lerPlanilha.reset_index(drop=True)
-
-ler_planilha()
-time.sleep(2000)
-###################################################
-bot.iniciar_navegador()
 browser = webdriver.Chrome()
 browser.maximize_window()
 
-browser.get("https://sispmjp.joaopessoa.pb.gov.br:8080/nfse/login.jsf")
-browser.execute_script("window.open('', '_blank');")
-browser.switch_to.window(browser.window_handles[-1])
-browser.get("https://sgc-pss.safewebpss.com.br/gerenciamentoac/#/pages/relatorios/relatorio-emissao")
-browser.switch_to.window(browser.window_handles[0])
-loginCpf = browser.find_element(By.ID, "j_username")
-password = browser.find_element(By.ID, "j_password")
-botaoEntrar = browser.find_element(By.ID, "commandButton_entrar")
+bot.abrir_sites(browser)
+bot.fazer_login(browser)
 
 totalNotasEmitidas = 0
+contador = 0
 tempo_random = random.uniform(1, 15)
 
-cpf = str(login.get_cpf())
-senha = str(login.get_senha())
-contador = 0
-
-while True:
-    try:
-        loginCpf.send_keys(str(login.get_cpf()))
-        time.sleep(1)
-        password.send_keys(str(login.get_senha()))
-        time.sleep(1)
-        botaoEntrar.click()
-        break
-    except:
-        continue
-
-browser.get("https://sispmjp.joaopessoa.pb.gov.br:8080/nfse/paginas/index.jsf")
-
+bot.fazer_login(browser)
 
 for x in range(int(formatacao.quantidadeNotas())):
-
-    browser.get("https://sispmjp.joaopessoa.pb.gov.br:8080/nfse/paginas/index.jsf")
-    time.sleep(3)
 
     while True:
         try:

@@ -3,8 +3,8 @@ import time
 import pyautogui
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from Formatacao import Formatacao
-from Login import Login
+from scripts.Formatacao import Formatacao
+from scripts.Login import Login
 
 browser = webdriver.Chrome()
 browser.maximize_window()
